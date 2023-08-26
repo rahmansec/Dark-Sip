@@ -1,9 +1,8 @@
-import sys
 import os
 import pyshark
-import json
-import argparse
 import shlex
+import argparse
+
 username = ""
 realm = ""
 nonce = ""
@@ -27,7 +26,6 @@ for packet in capture:
         values = packet.sip._all_fields.values()
 
         for key, value in zip(keys, values):
-            
             if key == "sip.auth.username":
                 username = value
             elif key == "sip.auth.realm":
@@ -36,7 +34,7 @@ for packet in capture:
                 nonce = value
             elif key == "sip.auth.uri":
                 tmp = (str)(value)
-                uri = tmp.split(":")[0]
+                uri = tmp.split(":")[1]
             elif key == "sip.auth.digest.response":
                 respons = value
                 if (
@@ -46,16 +44,21 @@ for packet in capture:
                     and uri != ""
                     and respons != ""
                 ):
+                    #import IPython; IPython.embed()
+                    username = username.strip('"')
+                    realm=realm.strip('"')
+                    nonce=nonce.strip('"')
+                    uri=uri.strip('"')
+                    respons=respons.strip('"')
                     pattern = f"$sip$***{username}*{realm}*INVITE*sip*{uri}**{nonce}****MD5*{respons}"
                     print(f"\n\npattern: {pattern}\n")
+                    file = open("hash.txt", "w")
+                    file.write(pattern)
+                    file.close()
                     flag= True
                     break
         if(flag):
             break
-command = f"echo {pattern} > hash.txt && echo hashcat hash.txt {path_PasswordList}"
-command = shlex.quote(command)
-print(command)               
+command = f"hashcat hash.txt {path_PasswordList}"
 os.system(command)
-
-
 
