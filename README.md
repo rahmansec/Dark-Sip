@@ -26,7 +26,7 @@ This project gives a complete solution to crack SIP (Session Initiation Protocol
 pip install pyshark
 ```
 ```bash
-git clone https://github.com/Mr-Hosseinzadeh/Dark-Sip.git && cd Dark-Sip
+git clone https://github.com/rahmansec/Dark-Sip.git && cd Dark-Sip
 ```
 
 ```bash
